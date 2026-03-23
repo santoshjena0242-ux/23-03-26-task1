@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Browse Books | LibraryMS</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<nav class="navbar">
+  <div class="nav-brand">📚 LibraryMS</div>
+  <div class="nav-links">
+    <div class="nav-group">
+      <a th:href="@{/member/dashboard}">Dashboard</a>
+      <a th:href="@{/member/books}" class="active">Browse Books</a>
+      <a th:href="@{/member/my-books}">My Books</a>
+    </div>
+    <span class="nav-user">
+      👤 <span sec:authentication="name">Member</span>
+      <a th:href="@{/logout}" class="btn-logout">Logout</a>
+    </span>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="page-header">
+    <h2>🔍 Browse Books</h2>
+  </div>
+
+  <form th:action="@{/member/books}" method="get" class="search-bar">
+    <input type="text" name="search" class="form-control"
+           placeholder="Search by title..." th:value="${search}"/>
+    <button type="submit" class="btn btn-primary">Search</button>
+    <a th:href="@{/member/books}" class="btn btn-outline">Clear</a>
+  </form>
+
+  <div class="book-grid">
+    <div th:each="b : ${books}" class="book-card"
+         th:classappend="${b.availableCopies == 0} ? 'book-unavailable' : ''">
+      <div class="book-icon">📖</div>
+      <div class="book-details">
+        <h4 th:text="${b.title}">Title</h4>
+        <p class="book-author" th:text="'by ' + (${b.author != null ? b.author.name : 'Unknown'})"></p>
+        <p class="book-genre" th:text="${b.genre != null ? b.genre : 'General'}"></p>
+        <p class="book-year"  th:text="${b.publishedYear != null ? b.publishedYear : ''}"></p>
+      </div>
+      <div class="book-footer">
+        <span th:if="${b.availableCopies > 0}" class="availability available">
+          ✅ <span th:text="${b.availableCopies}">0</span> Available
+        </span>
+        <span th:unless="${b.availableCopies > 0}" class="availability unavailable">
+          ❌ Not Available
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <div th:if="${#lists.isEmpty(books)}" class="empty-state">
+    <p>No books found.</p>
+  </div>
+</div>
+</body>
+</html>

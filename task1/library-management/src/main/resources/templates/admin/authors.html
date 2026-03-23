@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Authors | LibraryMS</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<nav class="navbar">
+  <div class="nav-brand">📚 LibraryMS</div>
+  <div class="nav-links">
+    <div class="nav-group">
+      <a th:href="@{/admin/dashboard}">Dashboard</a>
+      <a th:href="@{/admin/users}">Users</a>
+      <a th:href="@{/admin/authors}" class="active">Authors</a>
+      <a th:href="@{/admin/books}">Books</a>
+      <a th:href="@{/admin/issues}">Issues</a>
+    </div>
+    <span class="nav-user">
+      👤 <span sec:authentication="name">Admin</span>
+      <a th:href="@{/logout}" class="btn-logout">Logout</a>
+    </span>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="page-header">
+    <h2>✍️ Authors</h2>
+    <a th:href="@{/admin/authors/new}" class="btn btn-primary">➕ Add Author</a>
+  </div>
+
+  <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+  <div th:if="${error}"   class="alert alert-danger"  th:text="${error}"></div>
+
+  <div class="card">
+    <table class="table">
+      <thead>
+        <tr><th>#</th><th>Name</th><th>Nationality</th><th>Bio</th><th>Actions</th></tr>
+      </thead>
+      <tbody>
+        <tr th:each="a : ${authors}">
+          <td th:text="${a.id}"></td>
+          <td th:text="${a.name}"></td>
+          <td th:text="${a.nationality != null ? a.nationality : '-'}"></td>
+          <td th:text="${a.bio != null ? #strings.abbreviate(a.bio, 60) : '-'}"></td>
+          <td class="action-btns">
+            <a th:href="@{/admin/authors/{id}/edit(id=${a.id})}" class="btn btn-sm btn-outline">Edit</a>
+            <form th:action="@{/admin/authors/{id}/delete(id=${a.id})}" method="post" style="display:inline"
+                  onsubmit="return confirm('Delete this author?')">
+              <button class="btn btn-sm btn-danger">Delete</button>
+            </form>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</body>
+</html>

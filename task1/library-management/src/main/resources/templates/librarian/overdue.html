@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Overdue Books | LibraryMS</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<nav class="navbar">
+  <div class="nav-brand">📚 LibraryMS</div>
+  <div class="nav-links">
+    <div class="nav-group">
+      <a th:href="@{/librarian/dashboard}">Dashboard</a>
+      <a th:href="@{/librarian/books}">Books</a>
+      <a th:href="@{/librarian/issue}">Issue Book</a>
+      <a th:href="@{/librarian/return}">Return Book</a>
+      <a th:href="@{/librarian/overdue}" class="active">Overdue</a>
+      <a th:href="@{/librarian/members}">Members</a>
+    </div>
+    <span class="nav-user">
+      👤 <span sec:authentication="name">Librarian</span>
+      <a th:href="@{/logout}" class="btn-logout">Logout</a>
+    </span>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="page-header">
+    <h2>⚠️ Overdue Books</h2>
+  </div>
+
+  <div class="card">
+    <div th:if="${#lists.isEmpty(overdueList)}" class="empty-state">
+      <p>✅ No overdue books at the moment.</p>
+    </div>
+    <table th:if="${!#lists.isEmpty(overdueList)}" class="table">
+      <thead>
+        <tr>
+          <th>#</th><th>Book</th><th>Member</th><th>Email</th>
+          <th>Issue Date</th><th>Due Date</th><th>Days Overdue</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="r : ${overdueList}" class="row-danger">
+          <td th:text="${r.id}"></td>
+          <td th:text="${r.book.title}"></td>
+          <td th:text="${r.user.fullName}"></td>
+          <td th:text="${r.user.email}"></td>
+          <td th:text="${r.issueDate}"></td>
+          <td th:text="${r.dueDate}" class="text-danger fw-bold"></td>
+          <td class="text-danger fw-bold"
+              th:text="${#temporals.daysBetween(r.dueDate, #temporals.createToday())} + ' days'">
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</body>
+</html>

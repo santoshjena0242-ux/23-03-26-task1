@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Member History | LibraryMS</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<nav class="navbar">
+  <div class="nav-brand">📚 LibraryMS</div>
+  <div class="nav-links">
+    <div class="nav-group">
+      <a th:href="@{/librarian/dashboard}">Dashboard</a>
+      <a th:href="@{/librarian/members}" class="active">Members</a>
+      <a th:href="@{/librarian/issue}">Issue Book</a>
+      <a th:href="@{/librarian/return}">Return Book</a>
+    </div>
+    <span class="nav-user">
+      👤 <span sec:authentication="name">Librarian</span>
+      <a th:href="@{/logout}" class="btn-logout">Logout</a>
+    </span>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="page-header">
+    <h2>📜 Borrowing History</h2>
+    <a th:href="@{/librarian/members}" class="btn btn-outline">← Back to Members</a>
+  </div>
+
+  <div class="card mb-3">
+    <div class="member-info">
+      <div class="member-avatar">👤</div>
+      <div>
+        <h3 th:text="${user.fullName}">Member Name</h3>
+        <p th:text="${user.email}" class="text-muted">email@example.com</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div th:if="${#lists.isEmpty(records)}" class="empty-state">
+      <p>No borrowing history for this member.</p>
+    </div>
+    <table th:if="${!#lists.isEmpty(records)}" class="table">
+      <thead>
+        <tr>
+          <th>#</th><th>Book</th><th>Issue Date</th>
+          <th>Due Date</th><th>Return Date</th><th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="r : ${records}"
+            th:classappend="${r.status.name() == 'OVERDUE'} ? 'row-danger' : ''">
+          <td th:text="${r.id}"></td>
+          <td th:text="${r.book.title}"></td>
+          <td th:text="${r.issueDate}"></td>
+          <td th:text="${r.dueDate}"></td>
+          <td th:text="${r.returnDate != null ? r.returnDate : '-'}"></td>
+          <td>
+            <span class="badge"
+                  th:classappend="${r.status.name() == 'ISSUED'}   ? 'badge-info'    :
+                                  (${r.status.name() == 'RETURNED'} ? 'badge-success' : 'badge-danger')"
+                  th:text="${r.status}">
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</body>
+</html>

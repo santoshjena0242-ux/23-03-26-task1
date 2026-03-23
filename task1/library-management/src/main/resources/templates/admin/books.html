@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Books | LibraryMS</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<nav class="navbar">
+  <div class="nav-brand">📚 LibraryMS</div>
+  <div class="nav-links">
+    <div class="nav-group">
+      <a th:href="@{/admin/dashboard}">Dashboard</a>
+      <a th:href="@{/admin/users}">Users</a>
+      <a th:href="@{/admin/authors}">Authors</a>
+      <a th:href="@{/admin/books}" class="active">Books</a>
+      <a th:href="@{/admin/issues}">Issues</a>
+    </div>
+    <span class="nav-user">
+      👤 <span sec:authentication="name">Admin</span>
+      <a th:href="@{/logout}" class="btn-logout">Logout</a>
+    </span>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="page-header">
+    <h2>📖 Book Catalog</h2>
+    <a th:href="@{/admin/books/new}" class="btn btn-primary">➕ Add Book</a>
+  </div>
+
+  <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+  <div th:if="${error}"   class="alert alert-danger"  th:text="${error}"></div>
+
+  <div class="card">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>#</th><th>Title</th><th>Author</th><th>Genre</th>
+          <th>ISBN</th><th>Year</th><th>Total</th><th>Available</th><th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="b : ${books}">
+          <td th:text="${b.id}"></td>
+          <td th:text="${b.title}"></td>
+          <td th:text="${b.author != null ? b.author.name : '-'}"></td>
+          <td th:text="${b.genre != null ? b.genre : '-'}"></td>
+          <td th:text="${b.isbn != null ? b.isbn : '-'}"></td>
+          <td th:text="${b.publishedYear != null ? b.publishedYear : '-'}"></td>
+          <td th:text="${b.totalCopies}"></td>
+          <td>
+            <span th:text="${b.availableCopies}"
+                  th:class="${b.availableCopies == 0} ? 'text-danger fw-bold' : 'text-success fw-bold'">
+            </span>
+          </td>
+          <td class="action-btns">
+            <a th:href="@{/admin/books/{id}/edit(id=${b.id})}" class="btn btn-sm btn-outline">Edit</a>
+            <form th:action="@{/admin/books/{id}/delete(id=${b.id})}" method="post" style="display:inline"
+                  onsubmit="return confirm('Delete this book?')">
+              <button class="btn btn-sm btn-danger">Delete</button>
+            </form>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8"/>
+  <title>My Dashboard | LibraryMS</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<nav class="navbar">
+  <div class="nav-brand">📚 LibraryMS</div>
+  <div class="nav-links">
+    <div class="nav-group">
+      <a th:href="@{/member/dashboard}" class="active">Dashboard</a>
+      <a th:href="@{/member/books}">Browse Books</a>
+      <a th:href="@{/member/my-books}">My Books</a>
+    </div>
+    <span class="nav-user">
+      👤 <span sec:authentication="name">Member</span>
+      <a th:href="@{/logout}" class="btn-logout">Logout</a>
+    </span>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="page-header">
+    <h2>Welcome, <span th:text="${user.fullName}">Member</span>!</h2>
+    <span class="badge badge-member">MEMBER</span>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-grid">
+    <div class="stat-card stat-blue">
+      <div class="stat-icon">📚</div>
+      <div class="stat-info">
+        <div class="stat-value" th:text="${totalBooks}">0</div>
+        <div class="stat-label">Books in Library</div>
+      </div>
+    </div>
+    <div class="stat-card stat-green">
+      <div class="stat-icon">✅</div>
+      <div class="stat-info">
+        <div class="stat-value" th:text="${availableBooks}">0</div>
+        <div class="stat-label">Available Now</div>
+      </div>
+    </div>
+    <div class="stat-card stat-orange">
+      <div class="stat-icon">📖</div>
+      <div class="stat-info">
+        <div class="stat-value" th:text="${#lists.size(activeIssues)}">0</div>
+        <div class="stat-label">Books I Have</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Currently Borrowed -->
+  <div class="card mt-4">
+    <div class="card-header">
+      <h3>📖 Currently Borrowed</h3>
+      <a th:href="@{/member/my-books}" class="btn btn-sm btn-outline">View All History</a>
+    </div>
+
+    <div th:if="${#lists.isEmpty(activeIssues)}" class="empty-state">
+      <p>You have no books currently borrowed.</p>
+      <a th:href="@{/member/books}" class="btn btn-primary mt-2">Browse Books</a>
+    </div>
+
+    <table th:if="${!#lists.isEmpty(activeIssues)}" class="table">
+      <thead>
+        <tr><th>Book Title</th><th>Author</th><th>Issue Date</th><th>Due Date</th><th>Status</th></tr>
+      </thead>
+      <tbody>
+        <tr th:each="r : ${activeIssues}"
+            th:classappend="${r.status.name() == 'OVERDUE'} ? 'row-danger' : ''">
+          <td th:text="${r.book.title}"></td>
+          <td th:text="${r.book.author != null ? r.book.author.name : '-'}"></td>
+          <td th:text="${r.issueDate}"></td>
+          <td th:text="${r.dueDate}"
+              th:class="${r.status.name() == 'OVERDUE'} ? 'text-danger fw-bold' : ''"></td>
+          <td>
+            <span class="badge"
+                  th:classappend="${r.status.name() == 'OVERDUE'} ? 'badge-danger' : 'badge-info'"
+                  th:text="${r.status}">
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="quick-actions mt-4">
+    <h3>Quick Actions</h3>
+    <div class="action-grid">
+      <a th:href="@{/member/books}"    class="action-card">🔍 Browse Books</a>
+      <a th:href="@{/member/my-books}" class="action-card">📜 My History</a>
+    </div>
+  </div>
+</div>
+</body>
+</html>

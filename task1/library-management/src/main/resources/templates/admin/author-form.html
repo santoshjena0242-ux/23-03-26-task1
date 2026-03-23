@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Author Form | LibraryMS</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<nav class="navbar">
+  <div class="nav-brand">📚 LibraryMS</div>
+  <div class="nav-links">
+    <div class="nav-group">
+      <a th:href="@{/admin/dashboard}">Dashboard</a>
+      <a th:href="@{/admin/authors}" class="active">Authors</a>
+      <a th:href="@{/admin/books}">Books</a>
+    </div>
+    <span class="nav-user">
+      👤 <span sec:authentication="name">Admin</span>
+      <a th:href="@{/logout}" class="btn-logout">Logout</a>
+    </span>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="page-header">
+    <h2 th:text="${author.id != null} ? 'Edit Author' : 'Add Author'">Author Form</h2>
+    <a th:href="@{/admin/authors}" class="btn btn-outline">← Back</a>
+  </div>
+
+  <div class="card form-card">
+    <form th:action="${author.id != null} ? @{/admin/authors/{id}/edit(id=${author.id})} : @{/admin/authors/new}"
+          method="post">
+      <div class="form-group">
+        <label>Name *</label>
+        <input type="text" name="name" class="form-control"
+               th:value="${author.name}" placeholder="Author full name" required/>
+      </div>
+      <div class="form-group">
+        <label>Nationality</label>
+        <input type="text" name="nationality" class="form-control"
+               th:value="${author.nationality}" placeholder="e.g. British"/>
+      </div>
+      <div class="form-group">
+        <label>Bio</label>
+        <textarea name="bio" class="form-control" rows="4"
+                  placeholder="Short biography..." th:text="${author.bio}"></textarea>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary"
+                th:text="${author.id != null} ? 'Update Author' : 'Add Author'">Save</button>
+        <a th:href="@{/admin/authors}" class="btn btn-outline">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+</body>
+</html>

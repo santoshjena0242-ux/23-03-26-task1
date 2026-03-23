@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Issue Records | LibraryMS</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<nav class="navbar">
+  <div class="nav-brand">📚 LibraryMS</div>
+  <div class="nav-links">
+    <div class="nav-group">
+      <a th:href="@{/admin/dashboard}">Dashboard</a>
+      <a th:href="@{/admin/users}">Users</a>
+      <a th:href="@{/admin/authors}">Authors</a>
+      <a th:href="@{/admin/books}">Books</a>
+      <a th:href="@{/admin/issues}" class="active">Issues</a>
+    </div>
+    <span class="nav-user">
+      👤 <span sec:authentication="name">Admin</span>
+      <a th:href="@{/logout}" class="btn-logout">Logout</a>
+    </span>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="page-header">
+    <h2>📋 All Issue Records</h2>
+  </div>
+
+  <div class="card">
+    <div th:if="${#lists.isEmpty(records)}" class="empty-state">
+      <p>No issue records found.</p>
+    </div>
+    <table th:if="${!#lists.isEmpty(records)}" class="table">
+      <thead>
+        <tr>
+          <th>#</th><th>Book</th><th>Member</th>
+          <th>Issue Date</th><th>Due Date</th><th>Return Date</th><th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="r : ${records}"
+            th:classappend="${r.status.name() == 'OVERDUE'} ? 'row-danger' : ''">
+          <td th:text="${r.id}"></td>
+          <td th:text="${r.book.title}"></td>
+          <td th:text="${r.user.fullName}"></td>
+          <td th:text="${r.issueDate}"></td>
+          <td th:text="${r.dueDate}"
+              th:class="${r.status.name() == 'OVERDUE'} ? 'text-danger' : ''"></td>
+          <td th:text="${r.returnDate != null ? r.returnDate : '-'}"></td>
+          <td>
+            <span class="badge"
+                  th:classappend="${r.status.name() == 'ISSUED'} ? 'badge-info' :
+                                   (${r.status.name() == 'RETURNED'} ? 'badge-success' : 'badge-danger')"
+                  th:text="${r.status}">
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</body>
+</html>

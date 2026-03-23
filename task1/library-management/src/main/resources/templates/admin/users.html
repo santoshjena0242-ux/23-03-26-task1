@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Manage Users | LibraryMS</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<nav class="navbar">
+  <div class="nav-brand">📚 LibraryMS</div>
+  <div class="nav-links">
+    <div class="nav-group">
+      <a th:href="@{/admin/dashboard}">Dashboard</a>
+      <a th:href="@{/admin/users}" class="active">Users</a>
+      <a th:href="@{/admin/authors}">Authors</a>
+      <a th:href="@{/admin/books}">Books</a>
+      <a th:href="@{/admin/issues}">Issues</a>
+    </div>
+    <span class="nav-user">
+      👤 <span sec:authentication="name">Admin</span>
+      <a th:href="@{/logout}" class="btn-logout">Logout</a>
+    </span>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="page-header">
+    <h2>👥 User Management</h2>
+    <a th:href="@{/admin/users/new}" class="btn btn-primary">➕ Add User</a>
+  </div>
+
+  <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+  <div th:if="${error}"   class="alert alert-danger"  th:text="${error}"></div>
+
+  <div class="card">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>#</th><th>Full Name</th><th>Email</th><th>Roles</th><th>Status</th><th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="u : ${users}">
+          <td th:text="${u.id}"></td>
+          <td th:text="${u.fullName}"></td>
+          <td th:text="${u.email}"></td>
+          <td>
+            <span th:each="r : ${u.roles}" class="badge"
+                  th:classappend="${r.name == 'ROLE_ADMIN'} ? 'badge-admin' : (${r.name == 'ROLE_LIBRARIAN'} ? 'badge-librarian' : 'badge-member')"
+                  th:text="${r.name.replace('ROLE_','')}">
+            </span>
+          </td>
+          <td>
+            <span th:if="${u.enabled}"  class="badge badge-success">Active</span>
+            <span th:unless="${u.enabled}" class="badge badge-danger">Disabled</span>
+          </td>
+          <td class="action-btns">
+            <form th:action="@{/admin/users/{id}/toggle(id=${u.id})}" method="post" style="display:inline">
+              <button class="btn btn-sm btn-outline" th:text="${u.enabled} ? 'Disable' : 'Enable'">Toggle</button>
+            </form>
+            <form th:action="@{/admin/users/{id}/delete(id=${u.id})}" method="post" style="display:inline"
+                  onsubmit="return confirm('Delete this user?')">
+              <button class="btn btn-sm btn-danger">Delete</button>
+            </form>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</body>
+</html>

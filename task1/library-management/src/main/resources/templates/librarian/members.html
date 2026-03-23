@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Members | LibraryMS</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<nav class="navbar">
+  <div class="nav-brand">📚 LibraryMS</div>
+  <div class="nav-links">
+    <div class="nav-group">
+      <a th:href="@{/librarian/dashboard}">Dashboard</a>
+      <a th:href="@{/librarian/books}">Books</a>
+      <a th:href="@{/librarian/issue}">Issue Book</a>
+      <a th:href="@{/librarian/return}">Return Book</a>
+      <a th:href="@{/librarian/overdue}">Overdue</a>
+      <a th:href="@{/librarian/members}" class="active">Members</a>
+    </div>
+    <span class="nav-user">
+      👤 <span sec:authentication="name">Librarian</span>
+      <a th:href="@{/logout}" class="btn-logout">Logout</a>
+    </span>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="page-header">
+    <h2>👥 Library Members</h2>
+  </div>
+
+  <div class="card">
+    <div th:if="${#lists.isEmpty(members)}" class="empty-state">
+      <p>No members registered yet.</p>
+    </div>
+    <table th:if="${!#lists.isEmpty(members)}" class="table">
+      <thead>
+        <tr><th>#</th><th>Full Name</th><th>Email</th><th>Status</th><th>Actions</th></tr>
+      </thead>
+      <tbody>
+        <tr th:each="m : ${members}">
+          <td th:text="${m.id}"></td>
+          <td th:text="${m.fullName}"></td>
+          <td th:text="${m.email}"></td>
+          <td>
+            <span th:if="${m.enabled}"  class="badge badge-success">Active</span>
+            <span th:unless="${m.enabled}" class="badge badge-danger">Disabled</span>
+          </td>
+          <td>
+            <a th:href="@{/librarian/members/{id}/history(id=${m.id})}"
+               class="btn btn-sm btn-outline">View History</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</body>
+</html>

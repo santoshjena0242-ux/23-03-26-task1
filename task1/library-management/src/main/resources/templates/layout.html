@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title th:text="${pageTitle != null ? pageTitle + ' | LibraryMS' : 'LibraryMS'}">LibraryMS</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="navbar" sec:authorize="isAuthenticated()">
+  <div class="nav-brand">📚 LibraryMS</div>
+  <div class="nav-links">
+
+    <!-- Admin links -->
+    <div sec:authorize="hasRole('ROLE_ADMIN')" class="nav-group">
+      <a th:href="@{/admin/dashboard}">Dashboard</a>
+      <a th:href="@{/admin/users}">Users</a>
+      <a th:href="@{/admin/authors}">Authors</a>
+      <a th:href="@{/admin/books}">Books</a>
+      <a th:href="@{/admin/issues}">Issues</a>
+    </div>
+
+    <!-- Librarian links -->
+    <div sec:authorize="hasRole('ROLE_LIBRARIAN')" class="nav-group">
+      <a th:href="@{/librarian/dashboard}">Dashboard</a>
+      <a th:href="@{/librarian/books}">Books</a>
+      <a th:href="@{/librarian/issue}">Issue Book</a>
+      <a th:href="@{/librarian/return}">Return Book</a>
+      <a th:href="@{/librarian/overdue}">Overdue</a>
+      <a th:href="@{/librarian/members}">Members</a>
+    </div>
+
+    <!-- Member links -->
+    <div sec:authorize="hasRole('ROLE_MEMBER')" class="nav-group">
+      <a th:href="@{/member/dashboard}">Dashboard</a>
+      <a th:href="@{/member/books}">Browse Books</a>
+      <a th:href="@{/member/my-books}">My Books</a>
+    </div>
+
+    <span class="nav-user">
+      👤 <span sec:authentication="name">User</span>
+      <a th:href="@{/logout}" class="btn-logout">Logout</a>
+    </span>
+  </div>
+</nav>
+
+<!-- PAGE CONTENT -->
+<div class="container" th:fragment="content">
+  <!-- child pages override this -->
+</div>
+
+</body>
+</html>

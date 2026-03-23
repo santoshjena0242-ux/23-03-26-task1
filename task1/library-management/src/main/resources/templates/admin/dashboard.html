@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Dashboard | LibraryMS</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<th:block th:replace="~{layout :: __}">
+</th:block>
+<nav class="navbar">
+  <div class="nav-brand">📚 LibraryMS</div>
+  <div class="nav-links">
+    <div class="nav-group">
+      <a th:href="@{/admin/dashboard}" class="active">Dashboard</a>
+      <a th:href="@{/admin/users}">Users</a>
+      <a th:href="@{/admin/authors}">Authors</a>
+      <a th:href="@{/admin/books}">Books</a>
+      <a th:href="@{/admin/issues}">Issues</a>
+    </div>
+    <span class="nav-user">
+      👤 <span sec:authentication="name">Admin</span>
+      <a th:href="@{/logout}" class="btn-logout">Logout</a>
+    </span>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="page-header">
+    <h2>Admin Dashboard</h2>
+    <span class="badge badge-admin">ADMIN</span>
+  </div>
+
+  <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+  <div th:if="${error}"   class="alert alert-danger"  th:text="${error}"></div>
+
+  <!-- Stats Cards -->
+  <div class="stats-grid">
+    <div class="stat-card stat-blue">
+      <div class="stat-icon">👥</div>
+      <div class="stat-info">
+        <div class="stat-value" th:text="${totalUsers}">0</div>
+        <div class="stat-label">Total Users</div>
+      </div>
+    </div>
+    <div class="stat-card stat-green">
+      <div class="stat-icon">📖</div>
+      <div class="stat-info">
+        <div class="stat-value" th:text="${totalBooks}">0</div>
+        <div class="stat-label">Total Books</div>
+      </div>
+    </div>
+    <div class="stat-card stat-purple">
+      <div class="stat-icon">✍️</div>
+      <div class="stat-info">
+        <div class="stat-value" th:text="${totalAuthors}">0</div>
+        <div class="stat-label">Authors</div>
+      </div>
+    </div>
+    <div class="stat-card stat-orange">
+      <div class="stat-icon">📋</div>
+      <div class="stat-info">
+        <div class="stat-value" th:text="${activeIssues}">0</div>
+        <div class="stat-label">Active Issues</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Overdue Section -->
+  <div class="card mt-4">
+    <div class="card-header">
+      <h3>⚠️ Overdue Books</h3>
+      <a th:href="@{/admin/issues}" class="btn btn-sm btn-outline">View All Issues</a>
+    </div>
+    <div th:if="${#lists.isEmpty(overdueList)}" class="empty-state">
+      <p>✅ No overdue books at the moment.</p>
+    </div>
+    <table th:if="${!#lists.isEmpty(overdueList)}" class="table">
+      <thead>
+        <tr>
+          <th>#</th><th>Book</th><th>Member</th><th>Due Date</th><th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="r : ${overdueList}">
+          <td th:text="${r.id}"></td>
+          <td th:text="${r.book.title}"></td>
+          <td th:text="${r.user.fullName}"></td>
+          <td th:text="${r.dueDate}" class="text-danger"></td>
+          <td><span class="badge badge-danger" th:text="${r.status}"></span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="quick-actions mt-4">
+    <h3>Quick Actions</h3>
+    <div class="action-grid">
+      <a th:href="@{/admin/users/new}"   class="action-card">➕ Add User</a>
+      <a th:href="@{/admin/authors/new}" class="action-card">➕ Add Author</a>
+      <a th:href="@{/admin/books/new}"   class="action-card">➕ Add Book</a>
+      <a th:href="@{/admin/issues}"      class="action-card">📋 View Issues</a>
+    </div>
+  </div>
+</div>
+</body>
+</html>
